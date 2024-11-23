@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
         for (int j = 0; j < num_streets - 1; j++) {
             int v1 = i * num_streets + j;       // Vértice (avenida, rua)
             int v2 = i * num_streets + j + 1;   // Vértice (avenida, rua + 1)
-            if (v1 != 0 && v2 != num_vertices - 1) {
+            if (v1 != 0 && v2 != num_vertices - 1 && v1 != num_vertices - 1 && v2 != 0) {
                 add_edge(&graph, v1, v2);  // Aresta entre eles (horizontal)
             }
         }
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     num_solutions = fscs(&graph, solutions, num_citizens, num_supermarkets);
 
     printf("Nº Ruas: %d\n NºAvenidas: %d\n NºSupermercados: %d\n NºCidadãos: %d\n", num_streets,num_avenues,num_supermarkets,num_citizens);
-    
+
     printf("Localização dos supermercados:\n");
     for (int i = 0; i < num_supermarkets; i++) {
         printf("Supermercado %d: Avenida %d, Rua %d\n", i+1, supermarkets[i].avenue, supermarkets[i].street);
@@ -101,6 +101,8 @@ int main(int argc, char *argv[]) {
         }
         printf("\n");
     }
+
+    print_graph(&graph);
 
 
     free(supermarkets);

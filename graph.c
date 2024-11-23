@@ -1,6 +1,7 @@
 #include "graph.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 int init_graph(Graph *g, int num_vertices) {
     g->num_vertices = num_vertices;
@@ -35,4 +36,13 @@ void free_graph(Graph *g) {
     }
     free(g->adj);
     free(g->visited);
+}
+
+void print_graph(Graph *graph) {
+    for (int i = 0; i < graph->num_vertices; i++) {
+        for (int j = 0; j < graph->num_vertices; j++) {
+            printf("%d ", graph->adj[i][j]);
+        }
+        printf("\n");
+    }
 }
