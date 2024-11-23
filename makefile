@@ -1,4 +1,4 @@
 build:
-	gcc -o main main.c graph.c fscs.c -lpthread
+	gcc -g -o main main.c graph.c fscs.c input.c -lpthread
 run:
 	./main
