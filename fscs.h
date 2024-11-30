@@ -1,15 +1,11 @@
-#ifndef FSCS_H
-#define FSCS_H
 
-#include "graph.h"
-
-typedef struct {
+typedef struct Solution {
     int citizen_id;
-    int *path;       // Ponteiro para armazenar o caminho dinâmico
-    int path_length; // Tamanho do caminho
+    int* path;
+    int path_length;
 } Solution;
 
-int find_safe_citizen(Graph *g, Solution *solutions, int *num_solutions, int citizen_id, int start, int end);
-int fscs(Graph *graph, Solution *solutions, int citizens, int supermarkets);
 
-#endif // FSCS_H
+int fscs(Graph *graph, Solution **solutions);
+
+int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visited, Solution **solutions, int num_solutions);
