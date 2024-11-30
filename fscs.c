@@ -14,15 +14,6 @@ int fscs(Graph *graph, Solution **solutions)
 
     // Calcula o número máximo de soluções possível, como sendo o mínimo entre o número de supermercados e o número de cidadãos.
     int max_solutions = num_supermarkets < num_citizens ? num_supermarkets : num_citizens;
-    //Solution *solutions = (Solution*)malloc(max_solutions * sizeof(Solution));
-
-    // Inicializa a lista de Soluções (lista de caminhos válidos), lista de nós visitados, e o número de soluções.
-    /*for (int i = 0; i < max_solutions; i++) {
-        solutions[i].path = (int *)malloc(graph->rows * graph->cols * sizeof(int));
-        solutions[i].path_length = 0; // Inicializa o tamanho do caminho como 0
-        solutions[i].citizen_id = -1; // Opcional: inicializa com um valor inválido
-    }
-    */
 
     int num_solutions = 0;
 
@@ -70,7 +61,6 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
     }
 
     solution->citizen_id = citizen->id;
-    // solution->path = (int *)malloc(graph->rows * graph->cols * sizeof(int)); // Allocate memory for the path array
     solution->path_length = 1;
     solution->path = malloc(solution->path_length * sizeof(int));
     solution->path[0] = citizen->id;
@@ -160,7 +150,7 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
             do
             {
                 next_node = next_nodes[rand() % nodecount];
-                // printf("\n    Picked node: %d\n", next_node);
+                printf("\n    Picked node: %d\n", next_node);
             } while (next_node <= 0);
         }
 

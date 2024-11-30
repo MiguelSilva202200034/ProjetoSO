@@ -45,7 +45,7 @@ int main()
     for (int i = 0; i < num_solutions; i++)
     {
         printf("\nPath for citizen %d: \n", solutions[i].citizen_id);
-        printf("Size of solution: %d\n", solutions[i].path_length);
+        printf("\nSize of solution: %d\n", solutions[i].path_length);
         /*for (int j = 0; j < solutions[i].path_length; j++)
         {
             printf("%d ", solutions[i].path[j]);
@@ -72,18 +72,11 @@ int main()
         if (solutions[i].path)
         { // Evita liberar ponteiro nulo
             free(solutions[i].path);
-            printf("Liberou o caminho da solução %d!\n", i);
+            printf("\nLiberou o caminho da solução %d!\n", i);
         }
     }
-    /*for (int i = 0; i < num_solutions; i++)
-    {
-        free(&solutions[i].path);
-        printf("Limpou um caminho da solucao!\n");
-        free(&solutions[i]);
-        printf("Limpou uma solucao!\n");
-    }*/
     free(solutions);
-    printf("Limpou as solucoes!\n");
+    printf("\nLimpou as solucoes!\n");
 
     return 0;
 }
