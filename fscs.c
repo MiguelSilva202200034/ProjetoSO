@@ -6,7 +6,7 @@
 #include <time.h>
 #include <stdbool.h>
 
-int fscs(Graph *graph, Solution **solutions)
+Solution *fscs(Graph *graph, int *numSolutions)
 {
     int num_supermarkets, num_citizens;
     Vertex *citizens = getCitizens(graph, &num_citizens);
@@ -14,6 +14,13 @@ int fscs(Graph *graph, Solution **solutions)
 
     // Calcula o número máximo de soluções possível, como sendo o mínimo entre o número de supermercados e o número de cidadãos.
     int max_solutions = num_supermarkets < num_citizens ? num_supermarkets : num_citizens;
+    Solution *solutions = (Solution *)calloc(max_solutions, sizeof(Solution));
+    printf("Max solutions: %d", max_solutions);
+    if (solutions == NULL)
+    {
+        fprintf(stderr, "Erro: Falha ao alocar memória para soluções.\n");
+        return NULL;
+    }
 
     int num_solutions = 0;
 
@@ -24,13 +31,14 @@ int fscs(Graph *graph, Solution **solutions)
         int *visited_total = (int *)malloc(graph->rows * graph->cols * sizeof(int));
         printf("\nExecuting findSafeCitizen for citizen %d\n", citizens[i].id);
         int result = findSafeCitizen(graph, &citizens[i], visited_total, visited, solutions, num_solutions);
-        for (int i = 0; i < sizeof(solutions) / sizeof(Solution); i++)
+        printf("Numero de solucoes: %d\n", num_solutions);
+        for (int i = 0; i < num_solutions; i++)
         {
-            printf("%d", solutions[i]->citizen_id);
+            printf("Cidadao numero: %d", solutions[i].citizen_id);
         }
         free(visited);
         free(visited_total);
-        printf("Resultado encontrado para o cidadão %d", solutions[i]->citizen_id);
+        printf("\nResultado encontrado para o cidadão %d\n", solutions[i].citizen_id);
 
         // Se result for diferente de zero incrementa número de soluções
         if (result != 0)
@@ -38,32 +46,41 @@ int fscs(Graph *graph, Solution **solutions)
             num_solutions++;
         }
     }
-
-    return num_solutions; // Retorna o número de soluções encontradas
+    for (int i = 0; i < num_solutions; i++)
+    {
+        printf("Citizen id %d: %d\n", i, solutions[i].citizen_id);
+    }
+    *numSolutions = num_solutions;
+    return solutions; // Retorna o número de soluções encontradas
 }
 
-int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visited, Solution **solutions, int num_solutions)
+int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visited, Solution *solutions, int num_solutions)
 {
+    printf("Numero a ser incrementado de solucoes: %d\n", num_solutions);
     // Inicializa a lista dos próximos nós
     srand(time(NULL)); // Inicializa a semente do gerador de números aleatórios
-    int *next_nodes = (int *)malloc(graph->cols * graph->rows * sizeof(int));
     int max_nodes = graph->cols * graph->rows;
+    int *next_nodes = (int *)malloc(max_nodes * sizeof(int));
     memset(next_nodes, 0, max_nodes * sizeof(int));
 
     // Atribuir o citizen_id ao solution
     // Criar solução
-    Solution *solution = (Solution *)malloc(sizeof(Solution));
+    // Solution *solution = (Solution *)malloc(sizeof(Solution));
     int *arr = getConnectedVertexes(graph, *citizen);
-    //Ignorar vértices com nodes inválidos
-    if(arr[0] > max_nodes){
+    // Ignorar vértices com nodes inválidos
+    if (arr[0] > max_nodes || arr[1] > max_nodes || arr[2] > max_nodes || arr[3] > max_nodes)
+    {
         printf("💩Não existe mais nenhum caminho para o cidadão percorrer💩\n");
+        free(solutions[num_solutions].path);
+        //free(solutions);
         return 0;
     }
 
-    solution->citizen_id = citizen->id;
-    solution->path_length = 1;
-    solution->path = malloc(solution->path_length * sizeof(int));
-    solution->path[0] = citizen->id;
+    solutions[num_solutions].path = malloc(max_nodes * sizeof(int));
+    solutions[num_solutions].citizen_id = citizen->id;
+    solutions[num_solutions].path_length = 1;
+    solutions[num_solutions].path[0] = citizen->id;
+    printf("Id: %d", solutions[num_solutions].citizen_id);
     printf("\nFinding path for citizen %d\n", citizen->id);
     // Adiciona o cidadão à lista de visitados para evitar que ele seja visitado novamente
     visited[0] = citizen->id;
@@ -82,7 +99,8 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
     {
         free(next_nodes);
         printf("Não foi encontrado nenhum caminho!\n");
-        free(solution);
+        free(solutions[num_solutions].path);
+        //free(solutions);
         return 0;
     }
 
@@ -100,8 +118,8 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
         { // Sai se não houverem nós disponíveis
             free(next_nodes);
             printf("Não foi encontrado nenhum caminho!\n");
-            free(solution->path);
-            free(solution);
+            free(solutions[num_solutions].path);
+            //free(solutions);
             return 0;
         }
         // Se todos os nós tiverem já sido visitados retorna 0
@@ -118,7 +136,8 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
         {
             free(next_nodes);
             printf("Não foi encontrado nenhum caminho!\n");
-            free(solution);
+            free(solutions[num_solutions].path);
+            //free(solutions);
             return 0;
         }
 
@@ -150,7 +169,7 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
             do
             {
                 next_node = next_nodes[rand() % nodecount];
-                printf("\n    Picked node: %d\n", next_node);
+                printf("    Picked node: %d\n", next_node);
             } while (next_node <= 0);
         }
 
@@ -183,7 +202,7 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
                 }
             }
 
-            solution->path[solution->path_length++] = next_node;
+            solutions[num_solutions].path[solutions[num_solutions].path_length++] = next_node;
 
             // Remove os arcos que terminam no nó supermercado
             for (int i = 0; i < graph->rows; i++)
@@ -225,9 +244,9 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
             free(next_nodes);
             // Print path
             printf("    Path: ");
-            for (int i = 0; i < solution->path_length; i++)
+            for (int i = 0; i < solutions[num_solutions].path_length; i++)
             {
-                printf("%d ", solution->path[i]);
+                printf("%d ", solutions[num_solutions].path[i]);
             }
             printf("\n");
             return 1;
@@ -248,7 +267,7 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
         if (!was_visited)
         {
             printf("    Node %d was not visited\n", next_node);
-            solution->path[solution->path_length++] = next_node;
+            solutions[num_solutions].path[solutions[num_solutions].path_length++] = next_node;
             for (int i = 0; i < graph->rows * graph->cols; i++)
             {
                 if (visited[i] == 0)
@@ -278,9 +297,9 @@ int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visi
             }
             // Mostrar caminho até agora
             printf("    Path so far: ");
-            for (int i = 0; i < solution->path_length; i++)
+            for (int i = 0; i < solutions[num_solutions].path_length; i++)
             {
-                printf("%d ", solution->path[i]);
+                printf("%d ", solutions[num_solutions].path[i]);
             }
             printf("\n");
         }

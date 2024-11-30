@@ -6,6 +6,6 @@ typedef struct Solution {
 } Solution;
 
 
-int fscs(Graph *graph, Solution **solutions);
+Solution* fscs(Graph *graph, int *numSolutions);
 
-int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visited, Solution **solutions, int num_solutions);
+int findSafeCitizen(Graph *graph, Vertex *citizen, int *visited_total, int *visited, Solution *solutions, int num_solutions);
