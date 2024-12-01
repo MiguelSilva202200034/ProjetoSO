@@ -6,46 +6,35 @@
 
 int main(int argc, char *argv[])
 {
-    //if (argc != 4) {
-    //    fprintf(stderr, "Uso: %s <input_file> <num_processes> <max_time_ms>\n", argv[0]);
-    //    return EXIT_FAILURE;
-    //}
+    if (argc != 4) {
+        fprintf(stderr, "Uso: %s <input_file> <num_processes> <max_time_ms>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
 
-    //const char *filename = argv[1];
-    //int num_processes = atoi(argv[2]);
-    //int max_time_ms = atoi(argv[3]);
+    const char *filename = argv[1];
+    int num_processes = atoi(argv[2]);
+    int max_time_ms = atoi(argv[3]);
 
-    //int num_avenues, num_streets, num_supermarkets, num_citizens;
-    //Location *supermarkets, *citizens;
+    int num_avenues, num_streets, num_supermarkets, num_citizens;
+    Location *supermarkets, *citizens;
 
-    //if (read_input(filename, &num_avenues, &num_streets, &num_supermarkets, &num_citizens, &supermarkets, &citizens) != 0) {
-    //    fprintf(stderr, "Erro ao ler o arquivo de entrada.\n");
-    //    return EXIT_FAILURE;
-    //}
-
-    // Configuração do exemplo no enunciado
-    int M = 3; // Número de avenidas
-    int N = 3; // Número de ruas
-
-    // Coordenadas dos supermercados e cidadãos
-    int supermarkets[][2] = {{3, 2}, {3, 3}};
-    int citizens[][2] = {{2, 2}, {1, 1}};
-    int num_citizens = 2;
-    int num_supermarkets = 2;
-
+    if (read_input(filename, &num_avenues, &num_streets, &num_supermarkets, &num_citizens, &supermarkets, &citizens) != 0) {
+        fprintf(stderr, "Erro ao ler o arquivo de entrada.\n");
+        return EXIT_FAILURE;
+    }
     // Cria o grafo
-    Graph *city = createGraph(N, M);
+    Graph *city = createGraph(num_streets, num_avenues);
 
     // Adiciona supermercados ('s') no grafo
     for (int i = 0; i < num_supermarkets; i++)
     {
-        addVertex(city, supermarkets[i][0], supermarkets[i][1], 's');
+        addVertex(city, supermarkets[i].avenue, supermarkets[i].street, 's');
     }
 
     // Adiciona cidadãos ('c') no grafo
     for (int i = 0; i < num_citizens; i++)
     {
-        addVertex(city, citizens[i][0], citizens[i][1], 'c');
+        addVertex(city, citizens[i].avenue, citizens[i].street, 'c');
     }
 
     // Exibe o grafo
@@ -80,17 +69,17 @@ int main(int argc, char *argv[])
 
     // Libera a memória
     freeGraph(city);
-    printf("Limpou o grafo!\n");
+    //printf("Limpou o grafo!\n");
     for (int i = 0; i < numSolutions; i++)
     {
         if (solutions[i].path)
         { // Evita liberar ponteiro nulo
             free(solutions[i].path);
-            printf("\nLiberou o caminho da solução %d!\n", i);
+            //printf("\nLiberou o caminho da solução %d!\n", i);
         }
     }
     free(solutions);
-    printf("\nLimpou as solucoes!\n");
+    //printf("\nLimpou as solucoes!\n");
     
     return EXIT_SUCCESS;
 }

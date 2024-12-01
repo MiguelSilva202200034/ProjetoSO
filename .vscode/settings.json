@@ -3,6 +3,9 @@
         "stdlib.h": "c",
         "time.h": "c",
         "stdio.h": "c",
-        "graph.h": "c"
-    }
+        "graph.h": "c",
+        "modelo": "cpp",
+        "semaphore.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
